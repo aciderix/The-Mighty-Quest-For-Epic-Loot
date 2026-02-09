@@ -1,0 +1,28 @@
+ActivateFrameByFrameMode 1
+
+setwindowtype 0
+pause 0
+
+#if SIZEX
+ #if SIZEY
+ 	setwindowsize %SIZEX %SIZEY
+	pause 5
+ #endif
+#endif
+
+MakeScreenShot
+pause 0
+	
+#if ORIGINAL_SIZEX
+ #if ORIGINAL_SIZEY
+ 	setwindowsize %ORIGINAL_SIZEX %ORIGINAL_SIZEY
+	pause 0
+ #endif
+#endif
+
+#if ORIGINAL_WINDOWTYPE
+ 	setwindowtype %ORIGINAL_WINDOWTYPE
+	pause 0
+#endif
+
+ActivateFrameByFrameMode 0
