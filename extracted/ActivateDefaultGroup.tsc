@@ -1,0 +1,128 @@
+#if HARDWARE_PC
+  AddEnableGroup HW_LOW
+  AddEnableGroup HW_MEDIUM
+  AddEnableGroup HW_HIGH
+  AddEnableGroup HW_ULTRA
+#endif
+
+#if HARDWARE_PS4
+  AddEnableGroup HW_ULTRA
+#endif
+
+#if HARDWARE_XONE
+  AddEnableGroup HW_ULTRA
+#endif
+
+#if HARDWARE_CMDLINE
+  AddEnableGroup HW_LOW
+#endif
+
+#if HARDWARE_X360
+  AddEnableGroup HW_LOW
+#endif
+
+#if HARDWARE_PS3
+  AddEnableGroup HW_LOW
+#endif
+
+AddEnableGroup Basic
+AddEnableGroup Premium
+
+AddEnableGroup BRANDED_CASTLE
+
+AddEnableGroup Floor_001
+AddEnableGroup Floor_002
+AddEnableGroup Floor_003
+AddEnableGroup Floor_004
+AddEnableGroup Floor_005
+AddEnableGroup Floor_006
+AddEnableGroup Floor_007
+AddEnableGroup Floor_008
+AddEnableGroup Column_001
+AddEnableGroup Column_002
+AddEnableGroup Column_003
+AddEnableGroup Column_004
+AddEnableGroup Column_005
+AddEnableGroup Column_006
+AddEnableGroup Column_007
+AddEnableGroup Column_008
+AddEnableGroup Trim_001
+AddEnableGroup Trim_002
+AddEnableGroup Trim_003
+AddEnableGroup Trim_004
+AddEnableGroup Detail_001
+AddEnableGroup Detail_002
+AddEnableGroup Detail_003
+AddEnableGroup Detail_004
+AddEnableGroup Detail_005
+AddEnableGroup Detail_006
+AddEnableGroup Detail_007
+AddEnableGroup Detail_008
+AddEnableGroup Crystal_001
+AddEnableGroup Crystal_002
+AddEnableGroup Crystal_003
+AddEnableGroup Crystal_004
+AddEnableGroup Stone_001
+AddEnableGroup Stone_002
+AddEnableGroup Stone_003
+AddEnableGroup Stone_004
+AddEnableGroup Stone_005
+AddEnableGroup Stone_006
+AddEnableGroup Stone_007
+AddEnableGroup Stone_008
+AddEnableGroup Metal_001
+AddEnableGroup Metal_002
+AddEnableGroup Metal_003
+AddEnableGroup Metal_004
+AddEnableGroup Metal_005
+AddEnableGroup Metal_006
+AddEnableGroup Metal_007
+AddEnableGroup Marble_001
+AddEnableGroup Marble_002
+AddEnableGroup Marble_003
+AddEnableGroup Marble_004
+AddEnableGroup Rank_1
+AddEnableGroup Rank_2
+AddEnableGroup Rank_3
+AddEnableGroup Rank_4
+AddEnableGroup Rank_5
+AddEnableGroup Rank_6
+AddEnableGroup Rank_7
+AddEnableGroup Damaged_None
+AddEnableGroup Damaged_R0
+AddEnableGroup Damaged_R1
+AddEnableGroup Damaged_R2
+AddEnableGroup Damaged_R3
+AddEnableGroup Full
+AddEnableGroup Half
+AddEnableGroup Empty
+AddEnableGroup OO_None
+AddEnableGroup OO1
+AddEnableGroup OO2
+AddEnableGroup OO3
+AddEnableGroup OO4
+AddEnableGroup OO_Knight
+AddEnableGroup OO_Archer
+AddEnableGroup OO_Mage
+AddEnableGroup OO_Runaway
+AddEnableGroup Region_1
+AddEnableGroup Region_2
+AddEnableGroup Region_3
+AddEnableGroup Region_4
+AddEnableGroup Region_5
+AddEnableGroup Region_6
+AddEnableGroup Region_7
+AddEnableGroup Region_Competition
+AddEnableGroup Region_FriendsZone
+AddEnableGroup Dirty_Level_0
+AddEnableGroup Dirty_Level_1
+AddEnableGroup Dirty_Level_2
+AddEnableGroup Hide_In_Build
+
+
+
+
+
+
+
+
