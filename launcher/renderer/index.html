@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>MQFEL Launcher</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="window-controls">
+    <button onclick="mqfel.minimize()">─</button>
+    <button onclick="mqfel.close()">✕</button>
+  </div>
+  
+  <div class="container">
+    <div class="logo">
+      <h1>⚔️ The Mighty Quest</h1>
+      <h2>For Epic Loot</h2>
+      <p class="subtitle">Revival Edition</p>
+    </div>
+    
+    <!-- Non connecté -->
+    <div id="login-section" class="section">
+      <p>Connecte-toi pour sauvegarder ta progression</p>
+      <button id="google-login" class="btn-google">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="">
+        Se connecter avec Google
+      </button>
+    </div>
+    
+    <!-- Connecté -->
+    <div id="play-section" class="section hidden">
+      <div class="user-info">
+        <img id="user-avatar" src="" alt="Avatar">
+        <div>
+          <p id="user-name">Joueur</p>
+          <p id="user-email">email@example.com</p>
+        </div>
+      </div>
+      
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-value" id="stat-heroes">0</span>
+          <span class="stat-label">Héros</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="stat-gold">0</span>
+          <span class="stat-label">Or</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="stat-attacks">0</span>
+          <span class="stat-label">Attaques</span>
+        </div>
+      </div>
+      
+      <button id="play-button" class="btn-play">▶ JOUER</button>
+      <button id="logout-button" class="btn-logout">Déconnexion</button>
+    </div>
+    
+    <!-- Chargement -->
+    <div id="loading-section" class="section hidden">
+      <div class="spinner"></div>
+      <p>Lancement du jeu...</p>
+    </div>
+  </div>
+  
+  <script src="app.js"></script>
+</body>
+</html>
