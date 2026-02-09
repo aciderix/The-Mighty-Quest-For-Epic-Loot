@@ -2,14 +2,37 @@
 
 ## 📦 Contenu de l'Archive
 
-| Fichier | Type | Rôle |
-|---------|------|------|
-| `mightyquest-ui.exe` | PE32 GUI (142 KB) | **Launcher UI uniquement** (pas le jeu!) |
-| `steam_api.dll` | PE32 DLL (107 KB) | Interface Steam authentique Valve |
-| `launcher.js` | JavaScript | Logique de connexion/authentification |
-| `*.tsc` | Scripts Opal Engine | Configuration boot/init du jeu |
-| `*.json` | Config | Packages, localisations, checksums |
-| `cef.pak` | Chromium | Ressources interface web (CEF) |
+| Fichier | Type | Taille | Rôle |
+|---------|------|--------|------|
+| `MightyQuest.exe` | PE32 GUI | 8.2 MB | ✅ **EXÉCUTABLE PRINCIPAL DU JEU** |
+| `mightyquest-ui.exe` | PE32 GUI | 142 KB | Launcher UI (CEF) |
+| `steam_api.dll` | PE32 DLL | 107 KB | Interface Steam authentique Valve |
+| `launcher.js` | JavaScript | 16 KB | Logique de connexion/authentification |
+| `*.tsc` | Scripts Opal Engine | - | Configuration boot/init du jeu |
+| `*.json` | Config | - | Packages, localisations, checksums |
+
+---
+
+## 🔬 ANALYSE MightyQuest.exe (radare2)
+
+### Imports réseau clés
+```
+WINHTTP.dll    → WinHttpCloseHandle (requêtes HTTP)
+WS2_32.dll     → getnameinfo (sockets TCP/UDP)
+steam_api.dll  → SteamUtils
+libcef.dll     → cef_string_utf16_to_utf8 (Chromium)
+```
+
+### Chemin PDB trouvé
+```
+D:\HQ\AG_BA073_01\hyperquest\Branches\Update3\Hyperquest\Startup\_Lib\HW_PC_MASTER\Startup\MightyQuest_original.pdb
+```
+→ Le moteur s'appelle **"Hyperquest"** en interne!
+
+### Certificat de signature
+```
+UBISOFT ENTERTAINMENT INC.
+```
 
 ---
 
@@ -26,7 +49,6 @@ _updateSteamTicket: function() {
 },
 
 submitFormWithSteamTicket: function(steamTicket) {
-    // Ajoute le ticket Steam au formulaire de login
     form.append('<input type="hidden" name="steam_ticket" value="' + steamTicket + '">');
 }
 ```
@@ -43,14 +65,10 @@ submitFormWithSteamTicket: function(steamTicket) {
 ```javascript
 // Remplacer _updateSteamTicket par:
 _updateSteamTicket: function() {
-    // Bypass - générer un fake ticket
     var fakeTicket = btoa('fake_user_' + Date.now());
     this.submitFormWithSteamTicket(fakeTicket);
 }
 ```
-
-### ⚠️ Problème majeur
-L'archive **ne contient pas** `MightyQuest.exe` (le vrai exécutable du jeu mentionné dans `installscript.vdf`). Seul le launcher UI est présent!
 
 ---
 
@@ -58,40 +76,69 @@ L'archive **ne contient pas** `MightyQuest.exe` (le vrai exécutable du jeu ment
 
 ### Architecture découverte
 
-Le jeu utilise une architecture **client-serveur asynchrone**:
-
 ```
 ┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
 │ Launcher (CEF)  │────▶│ Serveur Ubisoft  │◀────│ MightyQuest.exe │
-│ mightyquest-ui  │     │ (FERMÉ)          │     │ (NON FOURNI)    │
+│ mightyquest-ui  │     │ (FERMÉ)          │     │ (8.2 MB)        │
 └─────────────────┘     └──────────────────┘     └─────────────────┘
 ```
+
+### Fichier de configuration réseau (CRITIQUE!)
+
+Dans `Init_Game.tsc`:
+```
+ReadGameConfigFile ..\Config\Synergy\Game.ini
+NetworkInit
+ServerSignIn
+```
+
+⚠️ **Le fichier `Game.ini` contient les URLs du serveur!**
 
 ### Tokens d'authentification identifiés (`launcher.js`):
 ```javascript
 _buildUserInfoPayload: function() {
     return {
-        LoginToken: gameToken,      // Cookie "t"
-        SGToken: sessionID,         // Cookie "hyperquest_launcher_session"  
-        UserEmail: userEmail        // Email du compte
+        LoginToken: this._getRemoteCookie("t"),
+        SGToken: this._getRemoteCookie("hyperquest_launcher_session"),
+        UserEmail: this._getRemoteCookie("email")
     };
 }
 ```
 
-### Points d'entrée serveur (`Init_Game.tsc`):
+### Composants du moteur Opal Engine (`Boot.tsc`):
 ```
-NetworkInit        // Initialisation réseau
-ServerSignIn       // Connexion au serveur
-USE_PATCHING       // Système de mise à jour
+1  General Engine Message
+2  Lib Curl         ← HTTP client
+3  Storm            ← Network framework?
+4  HTTP Proxy
+5  Network Manager  ← Gestionnaire réseau
+6  Bloomberg
+7  JSON Parser
+8  CEF              ← Chromium Embedded
+9  Argo             ← Protocol?
+10 CHAT
+11 BUILD
+12 GAMEPLAY
+13 SCRIPT
 ```
 
 ### 🔧 Stratégie de remplacement
 
-#### Phase 1: Identification des endpoints
-Tu auras besoin du **vrai exécutable** `MightyQuest.exe` pour:
-- Intercepter les appels réseau (Wireshark/Fiddler - si tu as une version qui tente de se connecter)
-- Analyser les strings avec radare2 pour trouver les URLs
-- Décompiler pour comprendre le protocole
+#### Phase 1: Trouver les URLs serveur
+
+**Option A - Fichier Game.ini**
+Chercher dans `%INSTALLDIR%\Config\Synergy\Game.ini`
+
+**Option B - Interception réseau**
+```bash
+# Avec Wireshark/Fiddler si le jeu tente de se connecter
+```
+
+**Option C - Analyse strings plus poussée**
+```bash
+# Chercher URLs dans l'exe
+strings MightyQuest.exe | grep -iE "https?://"
+```
 
 #### Phase 2: Architecture serveur custom
 
@@ -124,11 +171,11 @@ CREATE TABLE players (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Héros
+-- Héros (Knight, Archer, Mage, Runaway)
 CREATE TABLE heroes (
     id UUID PRIMARY KEY,
     player_id UUID REFERENCES players(id),
-    class TEXT, -- knight, archer, mage, runaway
+    class TEXT CHECK (class IN ('knight', 'archer', 'mage', 'runaway')),
     level INT DEFAULT 1,
     experience BIGINT DEFAULT 0,
     stats JSONB
@@ -138,9 +185,9 @@ CREATE TABLE heroes (
 CREATE TABLE castles (
     id UUID PRIMARY KEY,
     owner_id UUID REFERENCES players(id),
-    layout JSONB,  -- Configuration des pièces
-    traps JSONB,   -- Pièges placés
-    creatures JSONB -- Monstres
+    layout JSONB,
+    traps JSONB,
+    creatures JSONB
 );
 
 -- Inventaire
@@ -153,77 +200,63 @@ CREATE TABLE inventory (
 );
 ```
 
-#### Phase 4: Modification client (hosts/proxy)
+#### Phase 4: Modification client
 
-Option 1 - **Fichier hosts** (simple):
+**Option 1 - Fichier hosts** (simple):
 ```
 127.0.0.1 mightygame.ubi.com
 127.0.0.1 hyperquest.ubi.com
 ```
 
-Option 2 - **Patch binaire** (avancé):
+**Option 2 - Patch binaire** (avancé):
 Modifier les URLs dans `MightyQuest.exe` avec un éditeur hex
 
-Option 3 - **Proxy transparent**:
-```javascript
-// Cloudflare Worker exemple
-export default {
-  async fetch(request) {
-    const url = new URL(request.url);
-    
-    if (url.pathname === '/api/auth/login') {
-      // Rediriger vers Google OAuth
-      return handleGoogleAuth(request);
-    }
-    
-    if (url.pathname === '/api/game/sync') {
-      // Sync avec Supabase
-      return handleGameSync(request);
-    }
-  }
-}
-```
+**Option 3 - Proxy local + Game.ini modifié**
 
 ---
 
-## 🔴 FICHIERS MANQUANTS CRITIQUES
-
-Pour un reverse engineering complet, tu as besoin de:
-
-| Fichier | Localisation habituelle | Utilité |
-|---------|------------------------|---------|
-| `MightyQuest.exe` | `Game/` | Exécutable principal avec logique réseau |
-| `libcef.dll` | `Launcher/` | CEF pour le launcher |
-| `PublicLauncher.exe` | `Launcher/` | Vrai launcher |
-| `Config/Synergy/Game.ini` | `Config/` | URLs serveur, config réseau |
-| `*.bf` (Bigfiles) | `Bigfiles/` | Assets et données du jeu |
-
----
-
-## 📋 Fichiers les plus importants pour tes objectifs
+## 📋 Fichiers clés pour tes objectifs
 
 ### Pour bypass Steam:
-1. **`steam_api.dll`** ⭐⭐⭐ - Remplacer par émulateur
-2. **`launcher.js`** ⭐⭐ - Modifier la logique d'auth
+| Fichier | Priorité | Action |
+|---------|----------|--------|
+| `steam_api.dll` | ⭐⭐⭐⭐⭐ | Remplacer par Goldberg |
+| `launcher.js` | ⭐⭐⭐ | Modifier `_updateSteamTicket()` |
 
 ### Pour serveur custom:
-1. **`MightyQuest.exe`** ⭐⭐⭐⭐⭐ - **MANQUANT** - Indispensable!
-2. **`Init_Game.tsc`** ⭐⭐ - Montre le flow de connexion
-3. **`launcher.js`** ⭐⭐ - Structure des tokens
-4. **`Game.ini`** ⭐⭐⭐ - **MANQUANT** - URLs serveur
+| Fichier | Priorité | Contenu |
+|---------|----------|--------|
+| `MightyQuest.exe` | ⭐⭐⭐⭐⭐ | ✅ Analysé - uses WINHTTP/WS2_32 |
+| `Config\Synergy\Game.ini` | ⭐⭐⭐⭐⭐ | 🔍 À trouver - URLs serveur! |
+| `Init_Game.tsc` | ⭐⭐⭐ | NetworkInit / ServerSignIn flow |
+| `launcher.js` | ⭐⭐⭐ | Tokens: LoginToken, SGToken, Email |
+| `Boot.tsc` | ⭐⭐ | Architecture Opal Engine |
 
 ---
 
 ## 🎯 Prochaines étapes recommandées
 
-1. **Récupérer les fichiers manquants** du jeu complet (notamment `MightyQuest.exe`)
-2. **Installer Goldberg Steam Emulator** pour bypass Steam
-3. **Capturer le trafic réseau** si possible pour identifier les endpoints
-4. **Analyser `MightyQuest.exe`** avec radare2/Ghidra pour:
-   - Trouver les URLs hardcodées
-   - Comprendre le protocole de communication
-   - Identifier les fonctions de serialization des données
+1. ✅ ~~Récupérer MightyQuest.exe~~ FAIT!
+2. 🔍 **Trouver le fichier `Config\Synergy\Game.ini`** avec les URLs serveur
+3. 🔧 **Installer Goldberg Steam Emulator** pour bypass Steam
+4. 📡 **Capturer le trafic réseau** avec Fiddler/Wireshark
+5. 🏗️ **Créer le serveur Cloudflare Workers + Supabase**
 
 ---
 
-*Analyse réalisée le 9 février 2026*
+## 📊 Informations de version
+
+```
+Version: 0.36.1.34.0
+MightyQuest.exe CRC: 1315419961
+MightyQuest.exe Size: 8,158,440 bytes
+
+Worlds: 6 (attack, build, home, inventory, etc.)
+Themes: 30 packages
+Heroes: Knight, Archer, Mage, Runaway
+Regions: 7 + Competition + FriendsZone
+```
+
+---
+
+*Analyse réalisée le 9 février 2026 avec radare2*
