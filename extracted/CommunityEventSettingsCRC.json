@@ -1,0 +1,26 @@
+{
+    "RMPackagesCRCList":
+    [
+        {
+            "RMPackageVersion":{
+                "RMPackageId":{
+                    "RMPackageType":10,
+                    "PackageName":"",
+                    "MachineType":1,
+                    "DisplayName":"CommunityEventSettings"
+                },
+                "VersionName":"104956"
+            },
+            "RMPackageFileCRCList":
+            [
+                {
+                    "InstallationRelativePath":"Data\\GameplaySettings\\settings2.bin",
+                    "FileCRCInfo":{
+                        "CRC":1100518158,
+                        "FileSize":4321
+                    }
+                }
+            ]
+        }
+    ]
+}

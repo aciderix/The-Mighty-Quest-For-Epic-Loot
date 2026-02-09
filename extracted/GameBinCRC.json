@@ -1,0 +1,33 @@
+{
+    "RMPackagesCRCList":
+    [
+        {
+            "RMPackageVersion":{
+                "RMPackageId":{
+                    "RMPackageType":1,
+                    "PackageName":"",
+                    "MachineType":1,
+                    "DisplayName":"GameBin"
+                },
+                "VersionName":"280139"
+            },
+            "RMPackageFileCRCList":
+            [
+                {
+                    "InstallationRelativePath":"version.Game.txt",
+                    "FileCRCInfo":{
+                        "CRC":399339132,
+                        "FileSize":6
+                    }
+                },
+                {
+                    "InstallationRelativePath":"MightyQuest.exe",
+                    "FileCRCInfo":{
+                        "CRC":1315419961,
+                        "FileSize":8158440
+                    }
+                }
+            ]
+        }
+    ]
+}
