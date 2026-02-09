@@ -1,0 +1,129 @@
+
+#if UBI_MASTER
+	#ifnot IS_DEBUGGER_PRESENT
+    #ifnot AUTO_DETECT
+	    #set PlayIntroMovie
+    #endif		
+	#endif
+#endif
+
+
+//------------------------------------------------------------------------------------
+// System Textures package
+//------------------------------------------------------------------------------------
+#set PACKAGE_NAME PACKAGE_5D656AD2
+OpenBF PACKAGE\%PACKAGE_NAME
+	// GameConfig
+	ReadGameConfigFile ..\Config\Synergy\Game.ini
+	
+	// Package
+    LoadPackage RAW\PACKAGES\%PACKAGE_NAME\%PACKAGE_NAME
+CloseBF
+
+//------------------------------------------------------------------------------------
+// Preload
+//------------------------------------------------------------------------------------
+Source DB:>Scripts>InitPreload.tsc
+
+//------------------------------------------------------------------------------------
+// Framework init
+//------------------------------------------------------------------------------------
+MinimumInit // Where the window is shown
+
+#ifnot MAKE_BIGFILE
+#ifnot PlayIntroMovie
+	ShowLoadingScreen
+    pause 0.01
+#endif
+#endif
+
+LoadGameSettings
+
+SwitchLoadingScreen
+
+#if PlayIntroMovie
+    HideLoadingScreen
+	PlayMovie DB:>Movie>Ubisoft_Logo.bk2 
+	WaitPlayingMovieEnd
+	pause 0.01
+	ShowLoadingScreen
+#endif // ELSE PLAYMOVIE
+HideSplashScreen
+
+//------------------------------------------------------------------------------------
+// Fonts
+//------------------------------------------------------------------------------------
+Source DB:>Scripts>InitFonts.tsc
+
+
+LocalizationInit
+
+//------------------------------------------------------------------------------------
+// Application init
+//------------------------------------------------------------------------------------
+PreApplicationInit
+
+
+NetworkInit
+
+ServerSignIn
+
+// Patching
+#if USE_PATCHING
+    ActivateGamePatcher
+    SetStorage dataStorage:\
+#endif
+
+#ifnot AUTO_DETECT
+
+//------------------------------------------------------------------------------------
+// Misc
+//------------------------------------------------------------------------------------
+Source DB:>Scripts>InitMisc.tsc
+
+//------------------------------------------------------------------------------------
+// Data
+//------------------------------------------------------------------------------------
+Source DB:>Scripts>InitSound.tsc
+
+
+
+// Initialize gameplay ressource related
+Source DB:>Scripts>GameplayPackages.tsc
+
+Source DB:>Scripts>AllBF.tsc
+#else
+// System
+#set PACKAGE_NAME PACKAGE_A7288FF0
+OpenBF PACKAGE\%PACKAGE_NAME
+    LoadPackage RAW\PACKAGES\%PACKAGE_NAME\%PACKAGE_NAME
+    LoadAllObjects RAW\PACKAGES\%PACKAGE_NAME\%PACKAGE_NAME RAW\SHADERS\ .SHADER
+CloseBF
+
+#endif // AUTODETECT
+
+#ifnot MAKE_BIGFILE
+	HideLoadingScreen
+#endif 
+
+ApplicationInit
+ShowLoadingScreen
+
+//------------------------------------------------------------------------------------
+// Local user script, use this file to add any local testing that's required.
+//------------------------------------------------------------------------------------
+Source DB:>Scripts>user.tsc
+
+//------------------------------------------------------------------------------------
+// Local user script, used by the Opal Launcher to launch the game with only the selected world.
+//------------------------------------------------------------------------------------
+Source DB:>Scripts>opalLauncher.tsc
+
+//------------------------------------------------------------------------------------
+// Post boot, typically, this will launch the game
+//------------------------------------------------------------------------------------
+Source DB:>Scripts>PostBoot.tsc
+
+HideLoadingScreen
+//SwitchLoadingScreen
+
