@@ -1,0 +1,4 @@
+#ifnot UBI_PC
+    ActivateStartMenu
+    ActivateHome
+#endif // UBI_PC

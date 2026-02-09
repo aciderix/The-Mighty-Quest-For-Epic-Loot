@@ -1,0 +1,17 @@
+"InstallScript"
+{ 
+    "Firewall"
+    {
+            "Mighty Quest Launcher" "%INSTALLDIR%\\Launcher\\PublicLauncher.exe"
+            "Mighty Quest Game" "%INSTALLDIR%\\Game\\MightyQuest.exe"
+    }	
+    
+    "Run Process On Uninstall"
+    {
+        "Process_name"
+        {
+            "Process 1" "cmd.exe /C \"%INSTALLDIR%\\redist\\cleanup.bat\""
+            "Command 1" ""
+        }
+    }
+}

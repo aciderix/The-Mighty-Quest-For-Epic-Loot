@@ -1,0 +1,3 @@
+#ifnot MAKE_BIGFILE
+    ActivateInitialGameState
+#endif

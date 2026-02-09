@@ -1,0 +1,5 @@
+OpenBF MAP\%WORLD_NAME
+    LoadWorld RAW\WORLDS\%WORLD_NAME\%WORLD_NAME
+CloseBF
+UnloadWorld
+
