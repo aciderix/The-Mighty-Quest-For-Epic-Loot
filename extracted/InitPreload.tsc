@@ -1,0 +1,18 @@
+// PACKAGE_PRELOAD
+
+#if MAKE_BIGFILE
+ForceDependenciesInBF 1
+#endif
+
+// Preload package
+#set PACKAGE_NAME PACKAGE_PRELOAD
+OpenBF PACKAGE\%PACKAGE_NAME
+
+	// Package
+    LoadPackage RAW\PACKAGES\%PACKAGE_NAME\%PACKAGE_NAME
+	
+CloseBF
+
+#if MAKE_BIGFILE
+ForceDependenciesInBF 0
+#endif

@@ -1,0 +1,25 @@
+// --------------------------------------------------------------
+// Common Init
+// --------------------------------------------------------------
+
+InitRandomSeed      666
+#set SPAWNOBJECT Cube
+
+
+// --------------------------------------------------------------
+// Specific inits
+// --------------------------------------------------------------
+
+#if OPAL_TEST
+	source DB:>Scripts>Init_Test.tsc
+#else
+	#if OPAL_REMOTE
+		source DB:>Scripts>Init_OpalRemote.tsc
+	#else
+		#if MAKE_BIGFILE
+			source DB:>Scripts>Init_MakeBF.tsc
+		#else	// Game
+			source DB:>Scripts>Init_Game.tsc
+		#endif
+	#endif	
+#endif

@@ -1,0 +1,31 @@
+//------------------------------------------------------------------------------------
+// GameConfig + Misc
+//------------------------------------------------------------------------------------
+Source DB:>Scripts>InitMisc.tsc
+
+#set PACKAGE_NAME PACKAGE_5D656AD2
+OpenBF PACKAGE\%PACKAGE_NAME
+
+	//------------------------------------------------------------------------------------
+	// GameConfig
+	//------------------------------------------------------------------------------------
+	ReadGameConfigFile ..\Config\Synergy\Game.ini
+	
+	// Package
+    LoadPackage RAW\PACKAGES\%PACKAGE_NAME\%PACKAGE_NAME
+	
+CloseBF
+
+
+//------------------------------------------------------------------------------------
+// Application init
+//------------------------------------------------------------------------------------
+ApplicationInit
+
+// System objects
+#set PACKAGE_NAME PACKAGE_A7288FF0
+source DB:>Scripts>PackageBF.tsc
+
+UnInitializeCacheFileManager
+
+AssetGeneratorReady

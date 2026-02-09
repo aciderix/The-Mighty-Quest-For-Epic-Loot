@@ -1,0 +1,29 @@
+//------------------------------------------------------------------------------------
+// Data
+//------------------------------------------------------------------------------------
+
+// System texture (should be loaded first!)
+#set PACKAGE_NAME PACKAGE_5D656AD2
+OpenBF PACKAGE\%PACKAGE_NAME
+
+	//------------------------------------------------------------------------------------
+	// GameConfig
+	//------------------------------------------------------------------------------------
+	ReadGameConfigFile ..\Config\Synergy\Game.ini
+	
+	// Package
+    LoadPackage RAW\PACKAGES\%PACKAGE_NAME\%PACKAGE_NAME
+	
+CloseBF
+
+Source DB:>Scripts>InitPreload.tsc
+
+Source DB:>Scripts>InitMisc.tsc
+
+Source DB:>Scripts>InitSound.tsc
+
+Source DB:>Scripts>InitUI.tsc
+
+Source DB:>Scripts>InitFonts.tsc
+
+Source DB:>Scripts>AllBF.tsc
