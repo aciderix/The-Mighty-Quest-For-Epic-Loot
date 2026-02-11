@@ -1,0 +1,21 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// MQEL OFFLINE - User Custom Script
+// Place this file in: Game\Data\Scripts\
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Console commands for offline mode
+// You can add custom tweaks here
+
+// Enable console (press ` key in-game)
+SetConsoleEnabled 1
+
+// Show FPS
+ShowFPS 1
+
+// Unlock all content (optional - uncomment if desired)
+// UnlockAllContent
+
+// God mode for testing (optional)
+// SetGodMode 1
+
+echo "MQEL Offline Mode - User script loaded"

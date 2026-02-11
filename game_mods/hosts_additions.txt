@@ -1,0 +1,10 @@
+# MQEL Offline Server - Add these to your hosts file (C:\Windows\System32\drivers\etc\hosts)
+# This redirects game traffic to your local server
+
+127.0.0.1 mightyquest-lnch.ubi.com
+127.0.0.1 mightyquest-gc.ubi.com
+127.0.0.1 mightyquest-wss.ubi.com
+127.0.0.1 mightyquest.ubi.com
+127.0.0.1 hyperquest-sandbox-gc.ubi.com
+127.0.0.1 hyperquest-sandbox-lnch.ubi.com
+127.0.0.1 hyperquest-sandbox-wss.ubi.com

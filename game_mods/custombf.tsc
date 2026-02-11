@@ -1,0 +1,22 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// MQEL OFFLINE - Custom Bigfile Configuration
+// Place this file in: Game\Data\Scripts\
+// ═══════════════════════════════════════════════════════════════════════════
+
+#set CUSTOMBF
+
+// Point to local bigfiles
+SetBFPath ..\Bigfiles\
+
+// ═══════════════════════════════════════════════════════════════════════════
+// OFFLINE MODE SETTINGS
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Skip online checks
+#set OFFLINE_MODE
+
+// Disable patching system
+#unset USE_PATCHING
+
+// Skip intro movie for faster startup
+#set PlayIntroMovie 0
