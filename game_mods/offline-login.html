@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>MQEL Offline - Login</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            width: 400px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .logo { text-align: center; margin-bottom: 30px; }
+        .logo h1 { color: #ffd700; font-size: 28px; text-shadow: 0 0 20px rgba(255,215,0,0.5); }
+        .logo p { color: #888; font-size: 14px; margin-top: 5px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; color: #ccc; margin-bottom: 8px; font-size: 14px; }
+        .form-group input {
+            width: 100%; padding: 12px 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px; background: rgba(0,0,0,0.3);
+            color: #fff; font-size: 16px; transition: all 0.3s;
+        }
+        .form-group input:focus { outline: none; border-color: #ffd700; box-shadow: 0 0 10px rgba(255,215,0,0.3); }
+        .btn {
+            width: 100%; padding: 14px; border: none; border-radius: 10px;
+            font-size: 16px; font-weight: bold; cursor: pointer;
+            transition: all 0.3s; margin-bottom: 10px;
+        }
+        .btn-primary { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #1a1a2e; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(255,215,0,0.4); }
+        .btn-secondary { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.2); }
+        .divider { text-align: center; color: #666; margin: 20px 0; position: relative; }
+        .divider::before, .divider::after {
+            content: ''; position: absolute; top: 50%; width: 40%; height: 1px;
+            background: rgba(255,255,255,0.1);
+        }
+        .divider::before { left: 0; } .divider::after { right: 0; }
+        .server-status { text-align: center; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; }
+        .server-status.online { background: rgba(0,255,0,0.1); color: #4ade80; border: 1px solid rgba(0,255,0,0.2); }
+        .server-status.offline { background: rgba(255,0,0,0.1); color: #f87171; border: 1px solid rgba(255,0,0,0.2); }
+        .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>🏰 MQEL Offline</h1>
+            <p>The Mighty Quest For Epic Loot</p>
+        </div>
+        <div id="server-status" class="server-status">V\u00e9rification du serveur...</div>
+        <div id="offline-login">
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email">Email / Pseudo</label>
+                    <input type="text" id="offline-email" placeholder="votre@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="offline-password" placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022">
+                </div>
+                <button type="button" id="offline-login-btn" class="btn btn-primary">🔐 Se connecter</button>
+            </form>
+            <div class="divider">ou</div>
+            <button type="button" id="quick-play-btn" class="btn btn-secondary">\u26a1 Jouer rapidement</button>
+            <button type="button" id="register-btn" class="btn btn-secondary">\ud83d\udcdd Cr\u00e9er un compte</button>
+        </div>
+        <div class="footer">
+            <p>Version 0.36.1.34.0-offline</p>
+            <p>Serveur: localhost:3000 | Supabase Backend</p>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const SERVER_URL = 'http://localhost:3000';
+        $(document).ready(function() { checkServerStatus(); });
+        function checkServerStatus() {
+            $.ajax({
+                url: SERVER_URL + '/api/health', method: 'GET', timeout: 3000,
+                success: function(data) {
+                    $('#server-status').removeClass('offline').addClass('online')
+                        .html('\u2705 Serveur en ligne');
+                },
+                error: function() {
+                    $('#server-status').removeClass('online').addClass('offline')
+                        .html('\u274c Serveur hors ligne');
+                }
+            });
+        }
+        $('#offline-login-btn').click(function() {
+            const email = $('#offline-email').val();
+            const password = $('#offline-password').val();
+            if (!email || !password) { alert('Veuillez remplir tous les champs'); return; }
+            $.ajax({
+                url: SERVER_URL + '/api/auth/login', method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ email, password }),
+                success: function(r) {
+                    localStorage.setItem('mqel_token', r.token);
+                    alert('Connexion r\u00e9ussie!');
+                },
+                error: function(xhr) { alert('Erreur: ' + (xhr.responseJSON?.error || 'Connexion')); }
+            });
+        });
+        $('#quick-play-btn').click(function() {
+            const id = Math.random().toString(36).substring(7);
+            $.ajax({
+                url: SERVER_URL + '/api/auth/register', method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ email: 'player_'+id+'@offline.local', password: 'quickplay', display_name: 'Hero_'+id.toUpperCase() }),
+                success: function(r) {
+                    localStorage.setItem('mqel_token', r.token);
+                    alert('Compte cr\u00e9\u00e9!');
+                },
+                error: function(xhr) { alert('Erreur'); }
+            });
+        });
+    </script>
+</body>
+</html>
